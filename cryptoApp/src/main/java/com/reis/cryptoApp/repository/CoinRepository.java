@@ -20,6 +20,8 @@ public class CoinRepository {
 	
 	private static String SELECT_ALL = "SELECT name,sum(quantity) as quantity FROM coin GROUP BY name";
 	
+	private static String SELECT_BY_NAME = "SELECT * FROM coin WHERE name = ?";
+	
 	private JdbcTemplate jdbcTemplate;
 	
 	public CoinRepository( JdbcTemplate jdbcTemplate) {this.jdbcTemplate = jdbcTemplate;}
@@ -47,6 +49,26 @@ public class CoinRepository {
 				return coin;
 			}
 		});
+	}
+	
+	public List<Coin> getByName(String name){
+		
+		Object[] attr = new Object[] {name};
+		
+		return jdbcTemplate.query(SELECT_BY_NAME, new RowMapper<Coin>() {
+			@Override
+			public Coin mapRow(ResultSet rs, int rowNum) throws SQLException {
+				
+				Coin coin = new Coin();
+				coin.setId(rs.getInt("id"));
+				coin.setName(rs.getString("name"));
+				coin.setPrice(rs.getBigDecimal("price"));
+				coin.setQuantity(rs.getBigDecimal("quantity"));
+				coin.setDateTime(rs.getTimestamp("datetime"));
+				
+				return coin; 
+			}
+		}, attr);
 	}
 	
 	
