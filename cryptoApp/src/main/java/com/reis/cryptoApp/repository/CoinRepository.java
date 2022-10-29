@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.reis.cryptoApp.dto.CoinDTO;
 import com.reis.cryptoApp.entity.Coin;
 
 @Repository
@@ -35,11 +36,11 @@ public class CoinRepository {
 		return coin; 
 	}
 	
-	public List<Coin> getAll(){
-		return jdbcTemplate.query(SELECT_ALL, new RowMapper<Coin>(){
-			public Coin mapRow(ResultSet rs, int rowNum) throws SQLException{
+	public List<CoinDTO> getAll(){
+		return jdbcTemplate.query(SELECT_ALL, new RowMapper<CoinDTO>(){
+			public CoinDTO mapRow(ResultSet rs, int rowNum) throws SQLException{
 
-				Coin coin = new Coin();
+				CoinDTO coin = new CoinDTO();
 				coin.setName(rs.getString("name"));
 				coin.setQuantity(rs.getBigDecimal("quantity"));
 				
