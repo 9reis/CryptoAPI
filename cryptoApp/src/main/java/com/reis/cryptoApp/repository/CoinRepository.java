@@ -47,11 +47,18 @@ public class CoinRepository {
 		return query.getResultList();
 	}
 	
-	/*
-	public int remove(int id) {
-		return jdbcTemplate.update(DELETE,id);
+	@Transactional 
+	public boolean remove(int id) {
+		Coin coin = entityManager.find(Coin.class, id);
+		
+		if(entityManager.contains(coin)) {
+			coin = entityManager.merge(coin);
+		}
+		entityManager.remove(coin);
+		
+		return true;
 	}
-	*/
+	
 	
 	
 }
