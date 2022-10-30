@@ -28,6 +28,7 @@ public class CoinController {
 		this.coinRepository = coinRepository;
 	}
 	
+	/*
 	@Bean
 	public Coin init() {
 		
@@ -55,6 +56,7 @@ public class CoinController {
 		
 		return c1;
 	}
+	*/
 	
 	@GetMapping
 	public ResponseEntity get() {
