@@ -4,8 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
+
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -16,55 +19,28 @@ import com.reis.cryptoApp.entity.Coin;
 @EnableAutoConfiguration 
 public class CoinRepository {
 	
-	private static String INSERT = "INSERT INTO coin (name,price,quantity,datetime) values(?,?,?,?)"; 
+	private EntityManager entityManager;
 	
-	private static String SELECT_ALL = "SELECT name,SUM(quantity) AS quantity FROM coin GROUP BY name";
+	public CoinRepository( EntityManager entityManager) {this.entityManager = entityManager;}
 	
-	private static String SELECT_BY_NAME = "SELECT * FROM coin WHERE name = ?";
-	
-	private static String DELETE = "DELETE FROM coin WHERE id = ?";
-	
-	private static String UPDATE = "UPDATE coin SET name = ?, price = ?, quantity = ? WHERE id = ? ";
-	
-	private JdbcTemplate jdbcTemplate;
-	
-	public CoinRepository( JdbcTemplate jdbcTemplate) {this.jdbcTemplate = jdbcTemplate;}
-	
+	@Transactional 
 	public Coin insert(Coin coin) {
-		Object[] attr = new Object[] {
-			coin.getName(),
-			coin.getPrice(),
-			coin.getQuantity(),
-			coin.getDateTime()
-		};
-		
-		jdbcTemplate.update(INSERT, attr);
+		entityManager.persist(coin);
 		return coin; 
 	}
 	
+	@Transactional
 	public Coin update(Coin coin) {
-		Object[] attr = new Object[] {
-			coin.getName(),
-			coin.getPrice(),
-			coin.getQuantity(),
-			coin.getId()
-		};
-		jdbcTemplate.update(UPDATE,attr);
+		entityManager.merge(coin);
 		return coin;
 	}
 	
 	public List<CoinTransationDTO> getAll(){
-		return jdbcTemplate.query(SELECT_ALL, new RowMapper<CoinTransationDTO>(){
-			public CoinTransationDTO mapRow(ResultSet rs, int rowNum) throws SQLException{
-
-				CoinTransationDTO coin = new CoinTransationDTO();
-				coin.setName(rs.getString("name"));
-				coin.setQuantity(rs.getBigDecimal("quantity"));
-				
-				return coin;
-			}
-		});
+		String jpql = "SELECT new com.gm2.cryptoapp.dto.CoinTransationDTO(c.name, SUM(c.quantity)) FROM Coin c GROUP BY c.name";
+		TypedQuery<CoinTransationDTO> query = entityManager.createQuery(jpql, CoinTransationDTO.class);
+		return query.getResultList();
 	}
+		
 	
 	public List<Coin> getByName(String name){
 		
