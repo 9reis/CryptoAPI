@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.reis.cryptoApp.dto.CoinDTO;
+import com.reis.cryptoApp.dto.CoinTransationDTO;
 import com.reis.cryptoApp.entity.Coin;
 
 @Repository
@@ -18,11 +18,13 @@ public class CoinRepository {
 	
 	private static String INSERT = "INSERT INTO coin (name,price,quantity,datetime) values(?,?,?,?)"; 
 	
-	private static String SELECT_ALL = "SELECT name,sum(quantity) as quantity FROM coin GROUP BY name";
+	private static String SELECT_ALL = "SELECT name,SUM(quantity) AS quantity FROM coin GROUP BY name";
 	
 	private static String SELECT_BY_NAME = "SELECT * FROM coin WHERE name = ?";
 	
 	private static String DELETE = "DELETE FROM coin WHERE id = ?";
+	
+	private static String UPDATE = "UPDATE coin SET name = ?, price = ?, quantity = ? WHERE id = ? ";
 	
 	private JdbcTemplate jdbcTemplate;
 	
@@ -40,11 +42,22 @@ public class CoinRepository {
 		return coin; 
 	}
 	
-	public List<CoinDTO> getAll(){
-		return jdbcTemplate.query(SELECT_ALL, new RowMapper<CoinDTO>(){
-			public CoinDTO mapRow(ResultSet rs, int rowNum) throws SQLException{
+	public Coin update(Coin coin) {
+		Object[] attr = new Object[] {
+			coin.getName(),
+			coin.getPrice(),
+			coin.getQuantity(),
+			coin.getId()
+		};
+		jdbcTemplate.update(UPDATE,attr);
+		return coin;
+	}
+	
+	public List<CoinTransationDTO> getAll(){
+		return jdbcTemplate.query(SELECT_ALL, new RowMapper<CoinTransationDTO>(){
+			public CoinTransationDTO mapRow(ResultSet rs, int rowNum) throws SQLException{
 
-				CoinDTO coin = new CoinDTO();
+				CoinTransationDTO coin = new CoinTransationDTO();
 				coin.setName(rs.getString("name"));
 				coin.setQuantity(rs.getBigDecimal("quantity"));
 				

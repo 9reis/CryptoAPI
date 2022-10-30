@@ -2,7 +2,7 @@ package com.reis.cryptoApp.dto;
 
 import java.math.BigDecimal;
 
-public class CoinDTO {
+public class CoinTransationDTO {
 	
 	private String name; 
 	private BigDecimal quantity;
