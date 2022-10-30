@@ -22,6 +22,8 @@ public class CoinRepository {
 	
 	private static String SELECT_BY_NAME = "SELECT * FROM coin WHERE name = ?";
 	
+	private static String DELETE = "DELETE FROM coin WHERE id = ?";
+	
 	private JdbcTemplate jdbcTemplate;
 	
 	public CoinRepository( JdbcTemplate jdbcTemplate) {this.jdbcTemplate = jdbcTemplate;}
@@ -69,6 +71,10 @@ public class CoinRepository {
 				return coin; 
 			}
 		}, attr);
+	}
+	
+	public int remove(int id) {
+		return jdbcTemplate.update(DELETE,id);
 	}
 	
 	

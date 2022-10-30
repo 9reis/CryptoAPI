@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,5 +79,13 @@ public class CoinController {
 			return new ResponseEntity<>(error.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity delete(@PathVariable int id) {
+		try {
+			return new ResponseEntity<>(coinRepository.remove(id), HttpStatus.OK);
+		}catch(Exception error) {
+			return new ResponseEntity<>(error.getMessage(),HttpStatus.NO_CONTENT);
+		}
+	}
 }
