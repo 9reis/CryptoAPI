@@ -1,15 +1,13 @@
 package com.reis.cryptoApp.repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.reis.cryptoApp.dto.CoinTransationDTO;
@@ -19,9 +17,8 @@ import com.reis.cryptoApp.entity.Coin;
 @EnableAutoConfiguration 
 public class CoinRepository {
 	
+	@Autowired
 	private EntityManager entityManager;
-	
-	public CoinRepository( EntityManager entityManager) {this.entityManager = entityManager;}
 	
 	@Transactional 
 	public Coin insert(Coin coin) {
@@ -36,12 +33,12 @@ public class CoinRepository {
 	}
 	
 	public List<CoinTransationDTO> getAll(){
-		String jpql = "SELECT new com.gm2.cryptoapp.dto.CoinTransationDTO(c.name, SUM(c.quantity)) FROM Coin c GROUP BY c.name";
+		String jpql = "SELECT new com.reis.cryptoApp.dto.CoinTransationDTO(c.name, SUM(c.quantity)) FROM Coin c GROUP BY c.name";
 		TypedQuery<CoinTransationDTO> query = entityManager.createQuery(jpql, CoinTransationDTO.class);
 		return query.getResultList();
 	}
 		
-	
+	/*
 	public List<Coin> getByName(String name){
 		
 		Object[] attr = new Object[] {name};
@@ -65,6 +62,7 @@ public class CoinRepository {
 	public int remove(int id) {
 		return jdbcTemplate.update(DELETE,id);
 	}
+	*/
 	
 	
 }
